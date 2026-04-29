@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us - AstroSphere</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+
+/* 🌟 Star background */
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png');
+  animation: moveStars 60s linear infinite;
+  z-index: -1;
+}
+
+@keyframes moveStars {
+  from {background-position: 0 0;}
+  to {background-position: 10000px 5000px;}
+}
+
+.glow {
+  box-shadow: 0 0 25px rgba(168,85,247,0.5);
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<div class="stars"></div>
+
+<!-- HEADER -->
+<div class="text-center py-10">
+  <h1 class="text-5xl font-bold text-purple-400">📬 Contact Us</h1>
+  <p class="text-gray-300 mt-2">We’d love to hear from you</p>
+</div>
+
+<!-- MAIN -->
+<div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-4">
+
+  <!-- FORM -->
+  <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl glow">
+
+    <h2 class="text-2xl mb-6">Send a Message</h2>
+
+    <input id="name" placeholder="Your Name"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="email" placeholder="Your Email"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="subject" placeholder="Subject"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <textarea id="message" rows="4" placeholder="Your Message"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400"></textarea>
+
+    <button onclick="sendMessage()"
+      class="w-full bg-purple-600 py-3 rounded-xl hover:bg-purple-800">
+      Send Message ✨
+    </button>
+
+    <p id="status" class="mt-4 text-green-400"></p>
+
+  </div>
+
+  <!-- CONTACT INFO -->
+  <div class="space-y-6">
+
+    <div class="bg-white/10 p-6 rounded-xl glow">
+      📧 <b>Email:</b> support@astrosphere.com
+    </div>
+
+    <div class="bg-white/10 p-6 rounded-xl glow">
+      📞 <b>Phone:</b> +91 8871687822
+    </div>
+
+    <div class="bg-white/10 p-6 rounded-xl glow">
+      📍 <b>Location:</b> India
+    </div>
+
+    <div class="bg-white/10 p-6 rounded-xl glow">
+      ⏰ <b>Support Hours:</b> 10 AM – 6 PM
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+// 🔌 CONNECT THIS TO YOUR BACKEND
+async function sendMessage(){
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const subject = document.getElementById("subject").value;
+  const message = document.getElementById("message").value;
+
+  if(!name || !email || !message){
+    alert("Please fill all fields");
+    return;
+  }
+
+  try{
+    // 👉 Use the same backend origin as the page
+    const res = await fetch("/api/contact",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ name, email, subject, message })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("status").innerText = "Message sent successfully ✅";
+
+  }catch(err){
+    document.getElementById("status").innerText = "Error sending message ❌";
+  }
+}
+
+</script>
+
+</body>
+</html>

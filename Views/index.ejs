@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AstroSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+
+
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white">
+
+<!-- 🌟 Navbar -->
+<nav class="flex justify-between items-center px-8 py-5">
+  <h1 class="text-2xl font-bold text-purple-400">AstroSphere</h1>
+  <div class="space-x-6 hidden md:block">
+    <!-- <a href="#" class="hover:text-purple-400">Home</a> -->
+    <a href="/horoscope" class="hover:text-purple-400">Horoscope</a>
+    <a href="/zodiacc" class="hover:text-purple-400">Zodiac</a>
+    <a href="/contact" class="hover:text-purple-400">Contact</a>
+    <button onclick="handleLogout()" class="bg-red-500 px-4 py-2 rounded-full">Logout</button>
+    
+  </div>
+</nav>
+
+<!-- 🚀 Hero Section -->
+<section class="text-center py-20 px-6">
+  <h2 class="text-5xl md:text-6xl font-bold mb-6">
+    Discover Your Destiny ✨
+  </h2>
+  <p class="text-gray-300 max-w-xl mx-auto mb-8">
+    Unlock the secrets of the universe with kundli generator.
+  </p>
+  <button onclick="handleGetStarted()" class="bg-purple-600 hover:bg-purple-800 px-8 py-3 rounded-full text-lg shadow-lg transition">
+    GetStarted
+  </button>
+</section>
+
+<!-- 💫 Features -->
+<section class="grid md:grid-cols-3 gap-8 px-8 py-16">
+  
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/kundligeneretor'">
+    <h3 class="text-xl font-semibold mb-3">🔮 Kundli Generator</h3>
+    <p class="text-gray-300">Generate your detailed birth chart and kundli.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/astro'" >
+    <h3 class="text-xl font-semibold mb-3">🔮 Astro Insight Engine</h3>
+    <p class="text-gray-300">Direction, Numerology, Marriage & Dosha analysis.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/astro3d'" >
+    <h3 class="text-xl font-semibold mb-3">🌌 Astro 3D Engine</h3>
+    <p class="text-gray-300">Dasha, Dosha, Remedies & 3D Planets visualization.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/auspicious'">
+    <h3 class="text-xl font-semibold mb-3">🔮 Future Insight</h3>
+    <p class="text-gray-300">Auspicious & cautionary life signals prediction.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/birthchart'">
+    <h3 class="text-xl font-semibold mb-3">🔮 Birth Chart</h3>
+    <p class="text-gray-300">Demo kundli visualization with planets.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/kundlimilan'">
+    <h3 class="text-xl font-semibold mb-3">💑 Kundli Milan</h3>
+    <p class="text-gray-300">36 Gun compatibility matching for couples.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/lunarconsellation'">
+    <h3 class="text-xl font-semibold mb-3">🌙 Nakshatra Finder</h3>
+    <p class="text-gray-300">Discover your lunar constellation & personality.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/marriage'">
+    <h3 class="text-xl font-semibold mb-3">💍 Marriage Yog</h3>
+    <p class="text-gray-300">Marriage possibility & dosha analysis.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition cursor-pointer" onclick="window.location.href='/zodiac'">
+    <h3 class="text-xl font-semibold mb-3">⭐ Zodiac Horoscope</h3>
+    <p class="text-gray-300">Daily horoscope based on your zodiac sign.</p>
+  </div>
+
+</section>
+
+<!-- 🔮 Zodiac Section -->
+<section class="text-center py-16 px-8">
+  <h2 class="text-3xl font-bold mb-10">Explore Zodiac Signs</h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Aries</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Taurus</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Gemini</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Cancer</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Leo</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Virgo</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Libra</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Scorpio</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Sagittarius</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Capricorn</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Aquarius</a></div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition"><a href="/zodiacc">Pisces</a></div>
+  </div>
+</section>
+
+<!-- ⭐ CTA -->
+<section class="text-center py-20">
+  <h2 class="text-3xl font-bold mb-6">Start Your Cosmic Journey Today</h2>
+  <button onclick="window.location.href='/explorenow'" class="bg-purple-600 hover:bg-purple-800 px-10 py-3 rounded-full text-lg shadow-lg">
+   <a href="/explorenow"> Explore Now </a> 
+  </button>
+</section>
+
+<!-- 📌 Footer -->
+<footer class="text-center py-6 border-t border-purple-700">
+  <p class="text-gray-400">© 2026 AstroSphere. All rights reserved.</p>
+</footer>
+
+<script>
+
+function handleLogout(){
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('users');
+  alert('Logged out successfully');
+  window.location.href = "/login";
+}
+
+function handleGetStarted(){
+  window.location.href = "/kundligeneretor";
+}
+
+</script>
+
+
+</body>
+</html>

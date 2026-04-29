@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astro Insight Engine</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+.glow { box-shadow: 0 0 25px rgba(168,85,247,0.5); }
+</style>
+</head>
+
+<!-- <form action="/astro" method="POST">
+<input type="hidden" name="_method" value="POST"> -->
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<!-- HEADER -->
+<div class="text-center py-12">
+  <h1 class="text-5xl font-bold">🔮 Astro Insight Engine</h1>
+  <p class="text-gray-300 mt-2">Direction • Numerology • Marriage • Dosha</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</div>
+
+<!-- FORM -->
+<div class="flex justify-center px-4">
+  <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl w-full max-w-xl glow">
+
+    <input id="name" name="name" placeholder="Your Name"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="dob" name="dob" type="date"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="time" name="time" type="time"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <button type="button" onclick="analyze()"
+      class="w-full bg-purple-600 py-3 rounded-xl hover:bg-purple-800">
+      Analyze ✨
+    </button>
+
+    <div id="result" class="mt-8"></div>
+
+  </div>
+</div>
+</form>
+
+<script>
+
+// 🔢 Numerology (name → number)
+function getLuckyNumber(name){
+  const map = {
+    A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
+    J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
+    S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8
+  };
+
+  let sum = 0;
+  name.toUpperCase().split("").forEach(ch=>{
+    if(map[ch]) sum += map[ch];
+  });
+
+  while(sum > 9){
+    sum = sum.toString().split("").reduce((a,b)=>a+ +b,0);
+  }
+
+  return sum;
+}
+
+// 🧭 Direction logic
+function getDirection(num){
+  const dirs = {
+    1:"East 🌅", 2:"North-East 🌄", 3:"North 🧭",
+    4:"North-West 🌬️", 5:"West 🌇",
+    6:"South-West 🔥", 7:"South 🌴",
+    8:"South-East ⚡", 9:"Center 🔮"
+  };
+  return dirs[num];
+}
+
+// 💍 Marriage timing
+function getMarriageMonth(num){
+  const months = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
+
+  return months[num % 12];
+}
+
+// ⚠️ Dosha (simple pattern)
+function checkDosha(date){
+  return (date.getDate() % 3 === 0) ? "Present ⚠️" : "Not Significant ✅";
+}
+
+// MAIN FUNCTION
+function analyze(){
+
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){
+    alert("Please fill details");
+    return;
+  }
+
+  const date = new Date(dob);
+
+  const lucky = getLuckyNumber(name);
+  const direction = getDirection(lucky);
+  const marriageMonth = getMarriageMonth(lucky);
+  const dosha = checkDosha(date);
+
+  document.getElementById("result").innerHTML = `
+    <div class="bg-purple-800/30 p-6 rounded-xl">
+
+      <h2 class="text-2xl mb-3">${name}'s Astro Report</h2>
+
+      🔢 <b>Lucky Number:</b> ${lucky} <br><br>
+
+      🧭 <b>Favorable Direction:</b> ${direction} <br><br>
+
+      💍 <b>Marriage Timing (Favorable Month):</b> ${marriageMonth} <br><br>
+
+      ⚠️ <b>Obstacle / Dosha:</b> ${dosha} <br><br>
+
+      <p class="text-sm text-gray-400 mt-4">
+      These are general patterns based on numerology & simple rules.
+      For accurate astrology, full kundli calculation is required.
+      </p>
+
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>

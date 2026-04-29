@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nakshatra Finder</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+}
+
+/* glowing effect */
+.glow {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white">
+
+<!-- 🌠 HERO -->
+<section class="text-center py-16">
+  <h1 class="text-5xl font-bold mb-4">🔮 Nakshatra Finder</h1>
+  <p class="text-gray-300">Discover your Lunar Constellation & personality</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</section>
+
+<!-- 🧾 FORM -->
+<form action="/lunarconsellation" method="POST">
+  <input type="hidden" name="_method" value="POST">
+  <div class="flex justify-center px-4">
+    <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl w-full max-w-xl glow">
+
+<input id="name" name="name" placeholder="Your Name"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400 focus:outline-none">
+
+    <input id="dob" name="dob" type="date"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="time" name="time" type="time"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="place" name="place" placeholder="Birth Place"
+        class="w-full mb-6 p-3 rounded bg-black/40 border border-purple-400">
+
+      <button type="button" onclick="calculateNakshatra()"
+        class="w-full bg-purple-600 hover:bg-purple-800 py-3 rounded-xl text-lg transition">
+        Find Nakshatra ✨
+      </button>
+
+      <!-- RESULT -->
+      <div id="result" class="mt-8 text-center"></div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+
+// 🌙 27 Nakshatras
+const nakshatras = [
+  "Ashwini","Bharani","Krittika","Rohini","Mrigashira",
+  "Ardra","Punarvasu","Pushya","Ashlesha","Magha",
+  "Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati",
+  "Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha",
+  "Uttara Ashadha","Shravana","Dhanishta","Shatabhisha",
+  "Purva Bhadrapada","Uttara Bhadrapada","Revati"
+];
+
+// 🌟 Detailed Traits
+const nakshatraDetails = {
+  Ashwini: {
+    trait: "Energetic, fast, healing nature",
+    career: "Doctor, athlete, entrepreneur",
+    nature: "Quick decision maker"
+  },
+  Bharani: {
+    trait: "Strong, passionate, determined",
+    career: "Leader, artist",
+    nature: "Emotionally intense"
+  },
+  Krittika: {
+    trait: "Sharp, bold, fiery",
+    career: "Military, leadership roles",
+    nature: "Direct personality"
+  },
+  Rohini: {
+    trait: "Creative, charming, emotional",
+    career: "Arts, media, design",
+    nature: "Attractive personality"
+  },
+  Mrigashira: {
+    trait: "Curious, searching, intelligent",
+    career: "Research, travel jobs",
+    nature: "Restless mind"
+  },
+  Ardra: {
+    trait: "Deep, intense, transformative",
+    career: "Technology, research",
+    nature: "Emotionally strong"
+  },
+  Punarvasu: {
+    trait: "Optimistic, calm, balanced",
+    career: "Teaching, counseling",
+    nature: "Peaceful"
+  },
+  Pushya: {
+    trait: "Caring, nurturing, supportive",
+    career: "Healthcare, social work",
+    nature: "Helpful"
+  },
+  Ashlesha: {
+    trait: "Mysterious, intuitive",
+    career: "Psychology, occult",
+    nature: "Deep thinker"
+  },
+  Magha: {
+    trait: "Royal, authoritative",
+    career: "Politics, leadership",
+    nature: "Proud"
+  },
+  "Purva Phalguni": {
+    trait: "Creative, joyful",
+    career: "Entertainment, arts",
+    nature: "Fun-loving"
+  },
+  "Uttara Phalguni": {
+    trait: "Responsible, stable",
+    career: "Administration",
+    nature: "Dependable"
+  },
+  Hasta: {
+    trait: "Skillful, intelligent",
+    career: "Craft, business",
+    nature: "Smart"
+  },
+  Chitra: {
+    trait: "Artistic, charming",
+    career: "Design, fashion",
+    nature: "Creative"
+  },
+  Swati: {
+    trait: "Independent, flexible",
+    career: "Business, travel",
+    nature: "Free spirit"
+  },
+  Vishakha: {
+    trait: "Ambitious, goal-driven",
+    career: "Corporate, leadership",
+    nature: "Focused"
+  },
+  Anuradha: {
+    trait: "Loyal, friendly",
+    career: "Networking roles",
+    nature: "Supportive"
+  },
+  Jyeshtha: {
+    trait: "Powerful, protective",
+    career: "Defense, leadership",
+    nature: "Dominant"
+  },
+  Mula: {
+    trait: "Deep, root explorer",
+    career: "Research",
+    nature: "Intense"
+  },
+  "Purva Ashadha": {
+    trait: "Confident, expressive",
+    career: "Public speaking",
+    nature: "Bold"
+  },
+  "Uttara Ashadha": {
+    trait: "Disciplined, strong",
+    career: "Government roles",
+    nature: "Leader"
+  },
+  Shravana: {
+    trait: "Listener, wise",
+    career: "Teaching",
+    nature: "Calm"
+  },
+  Dhanishta: {
+    trait: "Wealth, rhythm",
+    career: "Music, finance",
+    nature: "Energetic"
+  },
+  Shatabhisha: {
+    trait: "Healing, secretive",
+    career: "Medicine",
+    nature: "Private"
+  },
+  "Purva Bhadrapada": {
+    trait: "Spiritual, intense",
+    career: "Philosophy",
+    nature: "Deep thinker"
+  },
+  "Uttara Bhadrapada": {
+    trait: "Calm, stable",
+    career: "Teaching",
+    nature: "Peaceful"
+  },
+  Revati: {
+    trait: "Kind, spiritual",
+    career: "Helping roles",
+    nature: "Gentle"
+  }
+};
+
+// ⚠️ Approx logic (demo)
+function calculateNakshatra(){
+
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){
+    alert("Please fill all details");
+    return;
+  }
+
+  const date = new Date(dob);
+  const dayOfYear = Math.floor(
+    (date - new Date(date.getFullYear(), 0, 0)) / 86400000
+  );
+
+  const index = dayOfYear % 27;
+  const nak = nakshatras[index];
+  const data = nakshatraDetails[nak];
+
+  document.getElementById("result").innerHTML = `
+    <div class="bg-purple-800/30 p-6 rounded-xl mt-4">
+      <h2 class="text-2xl font-bold mb-2">${name}, your Nakshatra is</h2>
+      <h1 class="text-3xl text-purple-400 mb-4">${nak}</h1>
+
+      🌟 <b>Traits:</b> ${data.trait} <br><br>
+      💼 <b>Career:</b> ${data.career} <br><br>
+      🧠 <b>Nature:</b> ${data.nature} <br><br>
+
+      <p class="text-sm text-gray-400 mt-4">
+      (Approx result — real Nakshatra requires precise moon calculation)
+      </p>
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>

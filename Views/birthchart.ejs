@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kundli Generator</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+
+/* Kundli grid */
+.kundli {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: 300px;
+  height: 300px;
+}
+.box {
+  border: 1px solid #a855f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  text-align: center;
+}
+.center {
+  grid-column: 2;
+  grid-row: 2;
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<!-- HEADER -->
+<div class="text-center py-10">
+  <h1 class="text-4xl font-bold">🔮 Kundli Generator</h1>
+  <p class="text-gray-300">Birth Chart (Demo Visualization)</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</div>
+
+<!-- FORM -->
+<form action="/birthchart" method="POST">
+  <input type="hidden" name="_method" value="POST">
+  <div class="flex justify-center">
+    <div class="bg-white/10 backdrop-blur-xl p-6 rounded-xl border border-purple-500 w-full max-w-xl">
+
+<input id="name" name="name" placeholder="Name"
+      class="w-full mb-3 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="dob" name="dob" type="date"
+      class="w-full mb-3 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="time" name="time" type="time"
+      class="w-full mb-3 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="place" name="place" placeholder="Birth Place"
+        class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+      <button type="button" onclick="generateKundli()"
+        class="w-full bg-purple-600 py-3 rounded hover:bg-purple-800">
+        Generate Kundli ✨
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- RESULT -->
+<div class="flex flex-col items-center mt-10">
+
+  <!-- Kundli Chart -->
+  <div id="chart" class="kundli mt-6"></div>
+
+  <!-- Info -->
+  <div id="info" class="mt-6 text-center"></div>
+
+</div>
+
+<script>
+
+// Sample planets
+const planets = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"];
+
+// Generate demo chart
+function generateKundli(){
+
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){
+    alert("Fill all details");
+    return;
+  }
+
+  // Random placement (demo only)
+  let houses = Array(12).fill("");
+
+  planets.forEach(p=>{
+    let house = Math.floor(Math.random()*12);
+    houses[house] += p + " ";
+  });
+
+  // Render chart (3x3 grid visual)
+  const chart = document.getElementById("chart");
+  chart.innerHTML = "";
+
+  for(let i=0;i<9;i++){
+    let div = document.createElement("div");
+    div.className = "box";
+
+    // Map houses visually (simplified)
+    let houseIndex = i;
+    if(i === 4){
+      div.innerHTML = "<b>Kundli</b>";
+    } else {
+      div.innerText = houses[houseIndex] || "House " + (houseIndex+1);
+    }
+
+    chart.appendChild(div);
+  }
+
+  // Info
+  document.getElementById("info").innerHTML = `
+    <h2 class="text-xl mt-4">${name}'s Chart</h2>
+    <p class="text-gray-400 mt-2">
+    (Demo chart — real kundli requires precise astronomical calculation)
+    </p>
+  `;
+}
+
+</script>
+
+</body>
+</html>

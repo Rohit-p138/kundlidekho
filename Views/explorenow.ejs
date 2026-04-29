@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstroSphere - Start Your Cosmic Journey</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+
+/* 🌟 Star Background */
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/stardust.png');
+  animation: moveStars 80s linear infinite;
+  z-index: -1;
+}
+
+@keyframes moveStars {
+  from {background-position: 0 0;}
+  to {background-position: 10000px 5000px;}
+}
+
+/* glow */
+.glow {
+  box-shadow: 0 0 25px rgba(168,85,247,0.6);
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white">
+
+<div class="stars"></div>
+
+<!-- NAVBAR -->
+<nav class="flex justify-between items-center px-8 py-4">
+  <h1 class="text-2xl font-bold text-purple-400">🌌 AstroSphere</h1>
+  <div class="space-x-6">
+    <a href="/dashboard" class="hover:text-purple-400">Home</a>
+    <a href="/zodiacc" class="hover:text-purple-400">Zodiac</a>
+    <a href="/kundlimilan" class="hover:text-purple-400">Match</a>
+    <a href="/contact" class="hover:text-purple-400">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="text-center py-24 px-4">
+
+  <h2 class="text-5xl md:text-6xl font-bold mb-6">
+    Start Your Cosmic Journey Today ✨
+  </h2>
+
+  <p class="text-gray-300 max-w-2xl mx-auto mb-8">
+    Unlock the secrets of your destiny with personalized astrology insights,
+    kundli matching, horoscope predictions, and cosmic guidance.
+  </p>
+
+  <div class="space-x-4">
+    <a href="/horoscope"
+      class="bg-purple-600 px-6 py-3 rounded-xl hover:bg-purple-800 glow">
+      Get Horoscope 🔮
+    </a>
+
+    <a href="/kundlimilan"
+      class="bg-purple-600 px-6 py-3 rounded-xl hover:bg-purple-800 glow">
+      Match Kundli 💑
+    </a>
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+<section class="max-w-6xl mx-auto grid md:grid-cols-3 gap-6 px-6 py-16">
+
+  <div class="bg-white/10 p-6 rounded-xl glow text-center">
+    🔮
+    <h3 class="text-xl mt-2"> Horoscope </h3>
+    <p class="text-gray-400 mt-2">Daily personalized predictions</p>
+  </div>
+
+  <div class="bg-white/10 p-6 rounded-xl glow text-center">
+    💑
+    <h3 class="text-xl mt-2"> Kundli Matching </h3>
+    <p class="text-gray-400 mt-2">Check compatibility instantly</p>
+  </div>
+
+  <div class="bg-white/10 p-6 rounded-xl glow text-center">
+    🌙
+    <h3 class="text-xl mt-2">Nakshatra Insights</h3>
+    <p class="text-gray-400 mt-2">Know your cosmic identity</p>
+  </div>
+
+</section>
+
+<!-- CTA -->
+<!-- <section class="text-center py-20">
+
+  <h2 class="text-4xl mb-6">Your Destiny Awaits 🌌</h2>
+
+  <a href="login.html"
+    class="bg-purple-600 px-8 py-4 rounded-xl text-lg hover:bg-purple-800 glow">
+    Get Started Now 🚀
+  </a>
+
+</section> -->
+
+<!-- FOOTER -->
+<footer class="text-center py-6 text-gray-400">
+  © 2026 AstroSphere | All Rights Reserved
+</footer>
+
+</body>
+</html>

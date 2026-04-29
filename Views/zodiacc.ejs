@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zodiac Hub</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+
+.glow {
+  box-shadow: 0 0 20px rgba(168,85,247,0.5);
+}
+
+/* 🌟 background stars */
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/stardust.png');
+  animation: moveStars 60s linear infinite;
+  z-index: -1;
+}
+
+@keyframes moveStars {
+  from {background-position: 0 0;}
+  to {background-position: 10000px 5000px;}
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<div class="stars"></div>
+
+<!-- HEADER -->
+<div class="text-center py-10">
+  <h1 class="text-5xl font-bold text-purple-400">♈ Zodiac Knowledge Hub</h1>
+  <p class="text-gray-300 mt-2">Explore all zodiac signs in detail</p>
+</div>
+
+<!-- GRID -->
+<div class="max-w-6xl mx-auto px-4">
+  <div id="zodiacGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+</div>
+
+<!-- DETAILS -->
+<div id="zodiacDetails" class="max-w-4xl mx-auto mt-10 px-4"></div>
+
+<script>
+
+// 🌟 ZODIAC DATA
+const zodiacData = {
+Aries:{symbol:"♈",traits:"Bold, Energetic, Leader",strength:"Courage, confidence",weakness:"Anger",love:"Passionate",career:"Leadership",money:"Risk taker"},
+Taurus:{symbol:"♉",traits:"Stable, Loyal",strength:"Patience",weakness:"Stubborn",love:"Committed",career:"Finance",money:"Saver"},
+Gemini:{symbol:"♊",traits:"Curious",strength:"Communication",weakness:"Inconsistent",love:"Fun",career:"Media",money:"Unstable"},
+Cancer:{symbol:"♋",traits:"Emotional",strength:"Empathy",weakness:"Mood swings",love:"Protective",career:"Healthcare",money:"Careful"},
+Leo:{symbol:"♌",traits:"Confident",strength:"Leadership",weakness:"Ego",love:"Romantic",career:"Management",money:"Spender"},
+Virgo:{symbol:"♍",traits:"Analytical",strength:"Detail",weakness:"Overthinking",love:"Practical",career:"Tech",money:"Saver"},
+Libra:{symbol:"♎",traits:"Balanced",strength:"Diplomacy",weakness:"Indecisive",love:"Romantic",career:"Law",money:"Balanced"},
+Scorpio:{symbol:"♏",traits:"Intense",strength:"Focus",weakness:"Jealousy",love:"Deep",career:"Research",money:"Secretive"},
+Sagittarius:{symbol:"♐",traits:"Adventurous",strength:"Optimism",weakness:"Careless",love:"Freedom",career:"Travel",money:"Risky"},
+Capricorn:{symbol:"♑",traits:"Disciplined",strength:"Hardworking",weakness:"Rigid",love:"Serious",career:"Business",money:"Planner"},
+Aquarius:{symbol:"♒",traits:"Innovative",strength:"Creative",weakness:"Detached",love:"Unpredictable",career:"Tech",money:"Unusual"},
+Pisces:{symbol:"♓",traits:"Dreamy",strength:"Creative",weakness:"Escapism",love:"Romantic",career:"Art",money:"Emotional"}
+};
+
+// 🧱 BUILD GRID
+const grid = document.getElementById("zodiacGrid");
+
+Object.keys(zodiacData).forEach(sign=>{
+  const card = document.createElement("div");
+
+  card.className = "bg-white/10 p-6 rounded-xl text-center cursor-pointer glow hover:bg-purple-700 transition transform hover:scale-105";
+
+  card.innerHTML = `
+    <div class="text-4xl">${zodiacData[sign].symbol}</div>
+    <div class="mt-2 text-lg">${sign}</div>
+  `;
+
+  card.onclick = ()=>showDetails(sign);
+
+  grid.appendChild(card);
+});
+
+// 🔍 SHOW DETAILS
+function showDetails(sign){
+
+  const z = zodiacData[sign];
+
+  document.getElementById("zodiacDetails").innerHTML = `
+    <div class="bg-purple-800/30 p-6 rounded-xl glow animate-fadeIn">
+
+      <h2 class="text-3xl mb-4">${z.symbol} ${sign}</h2>
+
+      ⭐ Traits: ${z.traits} <br><br>
+      💪 Strengths: ${z.strength} <br><br>
+      ⚠️ Weakness: ${z.weakness} <br><br>
+      ❤️ Love: ${z.love} <br><br>
+      💼 Career: ${z.career} <br><br>
+      💰 Money: ${z.money}
+
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>
+

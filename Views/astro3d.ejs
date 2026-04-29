@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astro 3D Insight Engine</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; margin:0; overflow-x:hidden; }
+#scene { width:100%; height:300px; }
+</style>
+</head>
+
+<body class="bg-black text-white">
+<!-- <form action="/astro3d" method="POST">
+  <input type="hidden" name="_method" value="POST"> -->
+
+<!-- HEADER -->
+<div class="text-center py-8">
+  <h1 class="text-4xl font-bold text-purple-400">🌌 Astro 3D Insight Engine</h1>
+  <p class="text-gray-400">Dasha • Dosha • Remedies • Rashi • 3D Planets</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</div>
+
+<!-- FORM -->
+<div class="flex justify-center px-4">
+  <div class="bg-white/10 p-6 rounded-xl border border-purple-500 w-full max-w-xl">
+
+    <input id="name" name="name" placeholder="Name"
+      class="w-full mb-3 p-2 rounded bg-black/40 border border-purple-400">
+
+    <input id="dob" name="dob" type="date"
+      class="w-full mb-3 p-2 rounded bg-black/40 border border-purple-400">
+
+    <button type="button" onclick="analyze()" 
+      class="w-full bg-purple-600 py-2 rounded hover:bg-purple-800">
+      Analyze ✨
+    </button>
+
+    <div id="result" class="mt-6"></div>
+  </div>
+</div>
+</form>
+
+<!-- 3D -->
+<div id="scene"></div>
+
+<script>
+
+// Zodiac
+function getZodiac(day, month){
+  const signs = [
+    ["Capricorn",20],["Aquarius",19],["Pisces",21],["Aries",20],
+    ["Taurus",21],["Gemini",21],["Cancer",23],["Leo",23],
+    ["Virgo",23],["Libra",23],["Scorpio",22],["Sagittarius",22]
+  ];
+  return (day < signs[month-1][1]) ? signs[month-1][0] : signs[month%12][0];
+}
+
+// Data
+const astroData = {
+  Aries:{remedy:"Chant Hanuman Chalisa", pros:"Leadership", cons:"Anger"},
+  Taurus:{remedy:"Donate food", pros:"Stability", cons:"Stubborn"},
+  Gemini:{remedy:"Meditation", pros:"Communication", cons:"Restless"},
+  Cancer:{remedy:"Moon worship", pros:"Caring", cons:"Mood swings"},
+  Leo:{remedy:"Sun prayer", pros:"Confidence", cons:"Ego"},
+  Virgo:{remedy:"Help needy", pros:"Detail oriented", cons:"Overthinking"},
+  Libra:{remedy:"Balance life", pros:"Harmony", cons:"Indecisive"},
+  Scorpio:{remedy:"Control emotions", pros:"Powerful", cons:"Intense"},
+  Sagittarius:{remedy:"Spiritual study", pros:"Optimistic", cons:"Careless"},
+  Capricorn:{remedy:"Discipline", pros:"Hardworking", cons:"Rigid"},
+  Aquarius:{remedy:"Charity", pros:"Innovative", cons:"Detached"},
+  Pisces:{remedy:"Meditation", pros:"Creative", cons:"Escapism"}
+};
+
+// Dasha (demo)
+function getDasha(year){
+  const phases = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"];
+  return phases[year % phases.length];
+}
+
+// Dosha (demo)
+function getDosha(date){
+  return (date.getDate() % 2 === 0) ? "Minor Dosha ⚠️" : "No Major Dosha ✅";
+}
+
+// MAIN
+function analyze(){
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){ alert("Fill details"); return; }
+
+  const d = new Date(dob);
+  const zodiac = getZodiac(d.getDate(), d.getMonth()+1);
+  const dasha = getDasha(d.getFullYear());
+  const dosha = getDosha(d);
+  const data = astroData[zodiac];
+
+  document.getElementById("result").innerHTML = `
+    <div class="bg-purple-800/30 p-4 rounded">
+
+      <h2 class="text-xl mb-2">${name}'s Report</h2>
+
+      ⭐ Rashi: ${zodiac} <br><br>
+      ⏳ Current Dasha: ${dasha} <br><br>
+      ⚠️ Dosha: ${dosha} <br><br>
+
+      🪔 Remedy: ${data.remedy} <br><br>
+      👍 Pros: ${data.pros} <br><br>
+      👎 Cons: ${data.cons}
+
+      <p class="text-xs mt-3 text-gray-400">
+      (Approx analysis. Real astrology requires full kundli.)
+      </p>
+    </div>
+  `;
+}
+
+// ===== 3D PLANETS =====
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/300, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, 300);
+document.getElementById("scene").appendChild(renderer.domElement);
+
+// Sun
+const sunGeo = new THREE.SphereGeometry(2,32,32);
+const sunMat = new THREE.MeshBasicMaterial({color:0xffff00});
+const sun = new THREE.Mesh(sunGeo, sunMat);
+scene.add(sun);
+
+// Planet
+const planetGeo = new THREE.SphereGeometry(0.5,32,32);
+const planetMat = new THREE.MeshBasicMaterial({color:0x00aaff});
+const planet = new THREE.Mesh(planetGeo, planetMat);
+planet.position.x = 5;
+scene.add(planet);
+
+camera.position.z = 10;
+
+function animate(){
+  requestAnimationFrame(animate);
+  planet.rotation.y += 0.02;
+  planet.position.x = Math.cos(Date.now()*0.001)*5;
+  planet.position.z = Math.sin(Date.now()*0.001)*5;
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstroSphere</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+body { font-family: 'Poppins', sans-serif; overflow-x:hidden; }
+canvas { position: fixed; top:0; left:0; z-index:-1; }
+</style>
+</head>
+
+<body class="bg-black text-white">
+
+<canvas id="stars"></canvas>
+
+<!-- NAVBAR -->
+<nav class="flex justify-between items-center px-8 py-5">
+  <h1 class="text-2xl font-bold text-purple-400">AstroSphere</h1>
+  <div>
+    <!-- <button onclick="openAuth()" class="bg-purple-600 px-4 py-2 rounded-full">Login</button> -->
+    <!-- <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-full ml-2">Logout</button> -->
+    <button onclick="window.location.href='/dashboard'" class="bg-blue-600 px-4 py-2 rounded-full ml-2">Back to Dashboard</button>
+  </div>
+</nav>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="hidden fixed inset-0 bg-black/80 flex justify-center items-center">
+  <div class="bg-white/10 border border-purple-500 backdrop-blur-xl p-8 rounded-2xl w-96 relative">
+    <h2 id="title" class="text-2xl font-bold text-center mb-6">Login ✨</h2>
+
+    <input id="email" type="email" placeholder="Email" class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+    <input id="password" type="password" placeholder="Password" class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <button onclick="handleAuth()" id="btn" class="w-full bg-purple-600 py-3 rounded">Login</button>
+
+    <p class="text-center text-sm mt-4">
+      <span id="toggleText">Don't have account?</span>
+      <button onclick="toggleMode()" class="text-purple-400">Signup</button>
+    </p>
+
+    <button onclick="closeAuth()" class="absolute top-2 right-4">✕</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="text-center py-16">
+  <h2 class="text-4xl font-bold">Discover Your Destiny ✨</h2>
+  <p id="userInfo" class="mt-3 text-gray-300">Not logged in</p>
+</section>
+
+<!-- PROTECTED CONTENT -->
+<section id="appSection" class="hidden text-center py-10 px-4">
+  <h2 class="text-2xl mb-6 font-semibold">Generate Your Horoscope 🔮</h2>
+
+  <form action="/zodiac" method="POST">
+    <input type="hidden" name="_method" value="POST">
+    <input id="dob" name="dob" type="date" class="p-3 rounded bg-black/40 border border-purple-400 mb-4">
+
+    <br>
+    <button type="button" onclick="generate()" class="bg-purple-600 px-6 py-2 rounded">Generate</button>
+
+    <div id="result" class="mt-6 text-gray-300 max-w-xl mx-auto"></div>
+  </form>
+</section>
+
+<script>
+// ===== AUTH SYSTEM =====
+let isLogin = true;
+
+function openAuth(){ document.getElementById('authModal').classList.remove('hidden'); }
+function closeAuth(){ document.getElementById('authModal').classList.add('hidden'); }
+
+function toggleMode(){
+  isLogin = !isLogin;
+  document.getElementById('title').innerText = isLogin ? "Login ✨" : "Signup ✨";
+  document.getElementById('btn').innerText = isLogin ? "Login" : "Signup";
+  document.getElementById('toggleText').innerText =
+    isLogin ? "Don't have account?" : "Already have account?";
+}
+
+function handleAuth(){
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+
+  if(isLogin){
+    const user = users.find(u => u.email === email && u.password === password);
+    if(user){
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      closeAuth();
+      updateUI();
+    } else {
+      alert("Invalid credentials");
+    }
+  } else {
+    users.push({ email, password });
+    localStorage.setItem('users', JSON.stringify(users));
+    alert("Account created");
+    toggleMode();
+  }
+}
+
+function logout(){
+  localStorage.removeItem('currentUser');
+  updateUI();
+}
+
+function updateUI(){
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  document.getElementById("userInfo").innerText =
+    user ? "Logged in as " + user.email : "Not logged in";
+
+  document.getElementById("appSection").classList.toggle("hidden", !user);
+}
+
+updateUI();
+
+// ===== ZODIAC =====
+function getZodiac(day, month){
+  const signs = [
+    ["Capricorn",20],["Aquarius",19],["Pisces",21],["Aries",20],
+    ["Taurus",21],["Gemini",21],["Cancer",23],["Leo",23],
+    ["Virgo",23],["Libra",23],["Scorpio",22],["Sagittarius",22]
+  ];
+  return (day < signs[month-1][1]) ? signs[month-1][0] : signs[(month)%12][0];
+}
+
+// ===== HOROSCOPE =====
+function generate(){
+  const dob = document.getElementById("dob").value;
+  if(!dob) return alert("Select DOB");
+
+  const d = new Date(dob);
+  const zodiac = getZodiac(d.getDate(), d.getMonth()+1);
+
+  const data = {
+    Aries:"New beginnings await you.",
+    Taurus:"Stay patient today.",
+    Gemini:"Communication is key.",
+    Cancer:"Trust your emotions.",
+    Leo:"Lead with confidence.",
+    Virgo:"Focus on details.",
+    Libra:"Balance is important.",
+    Scorpio:"Intensity drives success.",
+    Sagittarius:"Adventure calls.",
+    Capricorn:"Hard work pays off.",
+    Aquarius:"Think differently.",
+    Pisces:"Follow your intuition."
+  };
+
+  document.getElementById("result").innerHTML = `
+    <b>Zodiac:</b> ${zodiac}<br><br>
+    ${data[zodiac]}
+  `;
+}
+
+// ===== STARS =====
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = Array.from({length:200},()=>({
+  x:Math.random()*canvas.width,
+  y:Math.random()*canvas.height,
+  r:Math.random()*2
+}));
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  stars.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marriage Yog Analyzer</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+.glow { box-shadow: 0 0 25px rgba(168,85,247,0.5); }
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<!-- HEADER -->
+<div class="text-center py-12">
+  <h1 class="text-5xl font-bold">💍 Marriage Yog Analyzer</h1>
+  <p class="text-gray-300 mt-2">Marriage Possibility & Dosha Insight</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</div>
+
+<!-- FORM -->
+<form action="/marriage" method="POST">
+  <input type="hidden" name="_method" value="POST">
+  <div class="flex justify-center px-4">
+    <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl w-full max-w-xl glow">
+
+<input id="name" name="name" placeholder="Your Name"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="dob" name="dob" type="date"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="time" name="time" type="time"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="place" name="place" placeholder="Birth Place"
+        class="w-full mb-6 p-3 rounded bg-black/40 border border-purple-400">
+
+      <button type="button" onclick="analyzeMarriage()"
+        class="w-full bg-purple-600 py-3 rounded-xl hover:bg-purple-800">
+        Analyze Marriage Yog ✨
+      </button>
+
+      <div id="result" class="mt-8"></div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+
+// Zodiac helper
+function getZodiac(day, month){
+  const signs = [
+    ["Capricorn",20],["Aquarius",19],["Pisces",21],["Aries",20],
+    ["Taurus",21],["Gemini",21],["Cancer",23],["Leo",23],
+    ["Virgo",23],["Libra",23],["Scorpio",22],["Sagittarius",22]
+  ];
+  return (day < signs[month-1][1]) ? signs[month-1][0] : signs[month%12][0];
+}
+
+// Prediction engine
+const marriageData = {
+  Aries:{prob:"High",dosha:"Medium",note:"Early attraction, but patience needed"},
+  Taurus:{prob:"Very High",dosha:"Low",note:"Stable and long-term marriage"},
+  Gemini:{prob:"Medium",dosha:"Low",note:"Needs communication"},
+  Cancer:{prob:"High",dosha:"Medium",note:"Emotional bonding strong"},
+  Leo:{prob:"High",dosha:"High",note:"Ego clashes possible"},
+  Virgo:{prob:"Medium",dosha:"Low",note:"Overthinking delays marriage"},
+  Libra:{prob:"Very High",dosha:"Low",note:"Natural relationship builder"},
+  Scorpio:{prob:"High",dosha:"High",note:"Intense relationships"},
+  Sagittarius:{prob:"Medium",dosha:"Medium",note:"Freedom vs commitment conflict"},
+  Capricorn:{prob:"High",dosha:"Low",note:"Late but stable marriage"},
+  Aquarius:{prob:"Medium",dosha:"Low",note:"Unconventional relationships"},
+  Pisces:{prob:"High",dosha:"Medium",note:"Romantic but emotional"}
+};
+
+// Main function
+function analyzeMarriage(){
+
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){
+    alert("Fill all details");
+    return;
+  }
+
+  const d = new Date(dob);
+  const zodiac = getZodiac(d.getDate(), d.getMonth()+1);
+
+  const data = marriageData[zodiac];
+
+  // Fake Manglik logic (demo)
+  const manglik = (d.getDate() % 2 === 0) ? "Yes" : "No";
+
+  document.getElementById("result").innerHTML = `
+    <div class="bg-purple-800/30 p-6 rounded-xl">
+
+      <h2 class="text-2xl mb-2">${name}'s Marriage Insight</h2>
+      <h1 class="text-3xl text-purple-400 mb-4">${zodiac}</h1>
+
+      💍 <b>Marriage Probability:</b> ${data.prob} <br><br>
+
+      🔥 <b>Manglik Dosha:</b> ${manglik} <br><br>
+
+      ⚖️ <b>Dosha Intensity:</b> ${data.dosha} <br><br>
+
+      💡 <b>Insight:</b> ${data.note} <br><br>
+
+      <p class="text-sm text-gray-400 mt-4">
+      (This is an approximate interpretation. Real analysis requires full kundli calculation.)
+      </p>
+
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>

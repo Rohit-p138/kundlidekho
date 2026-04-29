@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstroSphere</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+.glow { box-shadow: 0 0 20px rgba(168,85,247,0.5); }
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<!-- HEADER -->
+<div class="text-center py-10">
+  <h1 class="text-5xl font-bold text-purple-400">🌌 AstroSphere</h1>
+  <p class="text-gray-300 mt-2">Your Complete Horoscope Insight</p>
+</div>
+
+<!-- FORM -->
+<div class="flex justify-center px-4">
+  <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl w-full max-w-xl glow">
+
+    <input id="name" placeholder="Your Name"
+      class="w-full mb-3 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="dob" type="date"
+      class="w-full mb-3 p-3 rounded bg-black/40 border border-purple-400">
+
+    <button onclick="analyze()"
+      class="w-full bg-purple-600 py-3 rounded-xl hover:bg-purple-800">
+      Generate Horoscope ✨
+    </button>
+
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="mt-10 px-4"></div>
+
+<script>
+
+// Zodiac
+function getZodiac(day, month){
+  const signs = [
+    ["Capricorn",20],["Aquarius",19],["Pisces",21],["Aries",20],
+    ["Taurus",21],["Gemini",21],["Cancer",23],["Leo",23],
+    ["Virgo",23],["Libra",23],["Scorpio",22],["Sagittarius",22]
+  ];
+  return (day < signs[month-1][1]) ? signs[month-1][0] : signs[month%12][0];
+}
+
+// Nakshatra (approx)
+const nakshatras = [
+"Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra",
+"Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni",
+"Uttara Phalguni","Hasta","Chitra","Swati","Vishakha",
+"Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha",
+"Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada",
+"Uttara Bhadrapada","Revati"
+];
+
+// Numerology
+function luckyNumber(name){
+  let sum = 0;
+  name.toUpperCase().split('').forEach(c=>{
+    if(c.match(/[A-Z]/)) sum += (c.charCodeAt(0)-64)%9 || 9;
+  });
+  while(sum > 9) sum = sum.toString().split('').reduce((a,b)=>+a + +b,0);
+  return sum;
+}
+
+// Horoscope data
+const horoscope = {
+  Aries:"Take bold steps today.",
+  Taurus:"Stability brings success.",
+  Gemini:"Communication is key.",
+  Cancer:"Trust emotions.",
+  Leo:"Lead confidently.",
+  Virgo:"Focus on details.",
+  Libra:"Balance your life.",
+  Scorpio:"Transformation ahead.",
+  Sagittarius:"Adventure awaits.",
+  Capricorn:"Hard work pays.",
+  Aquarius:"Innovate freely.",
+  Pisces:"Follow intuition."
+};
+
+// Remedies
+const remedies = {
+  Aries:"Chant Hanuman Chalisa",
+  Taurus:"Donate food",
+  Gemini:"Meditate",
+  Cancer:"Moon prayer",
+  Leo:"Sun worship",
+  Virgo:"Help others",
+  Libra:"Balance habits",
+  Scorpio:"Control anger",
+  Sagittarius:"Read spiritual texts",
+  Capricorn:"Stay disciplined",
+  Aquarius:"Do charity",
+  Pisces:"Practice meditation"
+};
+
+function analyze(){
+
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){
+    alert("Fill details");
+    return;
+  }
+
+  const d = new Date(dob);
+  const zodiac = getZodiac(d.getDate(), d.getMonth()+1);
+
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0))/86400000);
+  const nak = nakshatras[dayOfYear % 27];
+
+  const lucky = luckyNumber(name);
+
+  const directionMap = ["East","North-East","North","North-West","West","South-West","South","South-East","Center"];
+  const direction = directionMap[lucky-1];
+
+  const dosha = (d.getDate() % 2 === 0) ? "Minor Dosha ⚠️" : "No Dosha ✅";
+
+  document.getElementById("result").innerHTML = `
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <div class="bg-purple-800/30 p-6 rounded-xl">
+      <h2 class="text-2xl">${name}'s Horoscope</h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+
+      <div class="bg-white/10 p-4 rounded">
+        ♈ <b>Zodiac:</b> ${zodiac}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        🌙 <b>Nakshatra:</b> ${nak}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        🔢 <b>Lucky Number:</b> ${lucky}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        🧭 <b>Direction:</b> ${direction}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        🔮 <b>Today's Horoscope:</b> ${horoscope[zodiac]}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        💍 <b>Marriage Insight:</b> ${(lucky % 2 === 0) ? "Stable Marriage" : "Needs Patience"}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        ⚠️ <b>Dosha:</b> ${dosha}
+      </div>
+
+      <div class="bg-white/10 p-4 rounded">
+        🪔 <b>Remedy:</b> ${remedies[zodiac]}
+      </div>
+
+    </div>
+
+    <p class="text-gray-400 text-sm text-center">
+    This is a simplified horoscope model. Real astrology requires full kundli calculation.
+    </p>
+
+  </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>

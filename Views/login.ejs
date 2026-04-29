@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AstroSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+    canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+  </style>
+</head>
+
+
+<body class="bg-black text-white">
+
+<canvas id="stars"></canvas>
+
+<!-- Navbar -->
+<nav class="flex justify-between items-center px-8 py-5">
+  <h1 class="text-2xl font-bold text-purple-400">AstroSphere</h1>
+  <div>
+    <button onclick="openAuth()" class="bg-purple-600 px-4 py-2 rounded-full">Login</button>
+    <!-- <button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-full ml-2">Logout</button> -->
+  </div>
+</nav>
+
+<!-- 🔐 Auth Modal (No Firebase) -->
+<div id="authModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur flex justify-center items-center">
+  <div class="bg-white/10 border border-purple-500 backdrop-blur-xl p-8 rounded-2xl w-96 shadow-2xl relative">
+    
+    <h2 id="title" class="text-2xl font-bold text-center mb-6">Login ✨</h2>
+
+    <input id="email" type="email" placeholder="Enter Email" class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+    <input id="password" type="password" placeholder="Enter Password" class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <button onclick="handleAuth()" id="btn" class="w-full bg-purple-600 py-3 rounded">Login</button>
+
+    <p class="text-center text-sm mt-4">
+      <span id="toggleText">Don't have account?</span>
+      <button onclick="toggleMode()" class="text-purple-400">Signup</button>
+    </p>
+
+    <button onclick="closeAuth()" class="absolute top-2 right-4">✕</button>
+  </div>
+</div>
+
+<!-- 🚀 Hero Section -->
+<section class="text-center py-20 px-6">
+  <h2 class="text-5xl md:text-6xl font-bold mb-6">
+    Discover Your Destiny ✨
+  </h2>
+  <p class="text-gray-300 max-w-xl mx-auto mb-8">
+    Unlock the secrets of the universe with personalized horoscopes, zodiac compatibility, and cosmic insights.
+  </p>
+  <button class="bg-purple-600 hover:bg-purple-800 px-8 py-3 rounded-full text-lg shadow-lg transition">
+    Get Started
+  </button>
+</section>
+
+<!-- 💫 Features -->
+<section class="grid md:grid-cols-3 gap-8 px-8 py-16">
+  
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition">
+    <h3 class="text-xl font-semibold mb-3">🌞 Daily Horoscope</h3>
+    <p class="text-gray-300">Accurate daily predictions tailored to your zodiac sign.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition">
+    <h3 class="text-xl font-semibold mb-3">🌙 Moon Phases</h3>
+    <p class="text-gray-300">Understand how moon cycles influence your life.</p>
+  </div>
+
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition">
+    <h3 class="text-xl font-semibold mb-3">✨ Compatibility</h3>
+    <p class="text-gray-300">Discover your perfect zodiac match instantly.</p>
+  </div>
+
+</section>
+
+<!-- 🔮 Zodiac Section -->
+<section class="text-center py-16 px-8">
+  <h2 class="text-3xl font-bold mb-10">Explore Zodiac Signs</h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Aries</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Taurus</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Gemini</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Cancer</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Leo</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Virgo</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Libra</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Scorpio</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Sagittarius</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Capricorn</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Aquarius</div>
+    <div class="bg-purple-800/40 p-4 rounded-xl hover:scale-110 transition">Pisces</div>
+  </div>
+</section>
+
+<!-- ⭐ CTA -->
+<section class="text-center py-20">
+  <h2 class="text-3xl font-bold mb-6">Start Your Cosmic Journey Today</h2>
+  <button class="bg-purple-600 hover:bg-purple-800 px-10 py-3 rounded-full text-lg shadow-lg">
+    Explore Now
+  </button>
+</section>
+
+<!-- 📌 Footer -->
+<footer class="text-center py-6 border-t border-purple-700">
+  <p class="text-gray-400">© 2026 AstroSphere. All rights reserved.</p>
+</footer>
+
+<script>
+let isLogin = true;
+
+function openAuth(){
+  document.getElementById('authModal').classList.remove('hidden');
+}
+
+function closeAuth(){
+  document.getElementById('authModal').classList.add('hidden');
+}
+
+function toggleMode(){
+  isLogin = !isLogin;
+  document.getElementById('title').innerText = isLogin ? "Login ✨" : "Signup ✨";
+  document.getElementById('btn').innerText = isLogin ? "Login" : "Signup";
+  document.getElementById('toggleText').innerText = isLogin ? "Don't have account?" : "Already have account?";
+}
+
+function handleAuth(){
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+
+  if(isLogin){
+    const user = users.find(u => u.email === email && u.password === password);
+    if(user){
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      alert('Login successful');
+      closeAuth();      
+      window.location.href = "/dashboard";
+    } else {
+      alert('Invalid credentials');
+    }
+  } else {
+    users.push({ email, password });
+    localStorage.setItem('users', JSON.stringify(users));
+    alert('Account created');
+    toggleMode();
+  }
+}
+
+function logout(){
+  localStorage.removeItem('currentUser');
+  updateUI();
+}
+
+function updateUI(){
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  document.getElementById('userInfo').innerText = user ? "Logged in as " + user.email : "Not logged in";
+}
+
+updateUI();
+
+// ⭐ Stars
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let stars = Array.from({length:200},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2}));
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='white';
+  stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();});
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+<!-- 
+
+I’ll be blunt: **“0 → job-ready in 2–3 months” is possible only if you treat it like a full-time job (6–8 hrs/day)** and focus on *building*, not just watching tutorials. Given your background (you’ve touched Node/Express and deployment issues), you’re not exactly zero—you’re at **early beginner → lower-intermediate**. That helps.
+
+I’ll give you a **tight, execution-focused roadmap**—no fluff.
+
+---
+
+# 🚀 60–75 Day Roadmap (JavaScript + Node.js + Job Ready)
+
+## 🧩 PHASE 1 (Day 1–10): JavaScript Core (Non-Negotiable)
+
+Use:
+
+* freeCodeCamp
+* MDN Web Docs
+
+Focus only on what actually matters in interviews + backend:
+
+* Variables, scope (`var`, `let`, `const`)
+* Functions (arrow + normal)
+* Arrays + Objects (VERY IMPORTANT)
+* ES6 (destructuring, spread)
+* Async JS:
+
+  * callbacks
+  * promises
+  * async/await
+
+👉 Output:
+
+* 5–7 small programs (todo logic, API fetch, etc.)
+
+👉 Reality check:
+If async/await confuse you → you are not ready for backend yet.
+
+---
+
+## ⚙️ PHASE 2 (Day 11–20): Node.js + Core Backend
+
+Use:
+
+* Node.js docs
+* Express.js
+
+Learn:
+
+* What Node actually is (runtime, event loop)
+* Modules (`require`, `import`)
+* File system (`fs`)
+* npm (VERY important for packages)
+
+Then move to Express:
+
+* Create server
+* Routes (GET, POST)
+* Middleware
+* REST API basics
+
+👉 Build:
+
+* Simple API:
+
+  * `/users`
+  * `/products`
+
+---
+
+## 🗄️ PHASE 3 (Day 21–30): Database + Authentication
+
+Use:
+
+* MongoDB
+* Mongoose
+
+Learn:
+
+* CRUD operations
+* Schema & models
+* Connecting DB to Express
+
+Auth:
+
+* JWT (login/signup)
+* Password hashing
+
+👉 Build:
+
+* Auth system:
+
+  * Signup
+  * Login
+  * Protected route
+
+---
+
+## 🔥 PHASE 4 (Day 31–45): Real Projects (This decides job)
+
+Now stop learning → start building.
+
+### Project 1 (Mandatory)
+
+**Full Backend System**
+
+* Auth (JWT)
+* CRUD
+* MongoDB
+* Proper folder structure
+
+### Project 2 (Important)
+
+**Real-world app**
+Examples:
+
+* Job portal API
+* E-commerce backend
+* Blog system
+
+👉 Add:
+
+* Pagination
+* Search
+* Error handling
+
+---
+
+## 🌐 PHASE 5 (Day 46–55): Deployment + Real World Skills
+
+Use:
+
+* Render or Railway
+* GitHub
+
+Learn:
+
+* Deploy backend
+* Environment variables (.env)
+* Fix real errors (this is where devs grow)
+
+👉 Output:
+
+* Live API link
+* GitHub repo with README
+
+---
+
+## 🧠 PHASE 6 (Day 56–65): Interview Prep (Critical)
+
+Focus only on **high-frequency topics**:
+
+JavaScript:
+
+* Closures
+* Hoisting
+* Event loop
+
+Backend:
+
+* REST API design
+* Middleware
+* JWT flow
+
+Practice:
+
+* Basic DSA (arrays, strings)
+
+---
+
+## 💼 PHASE 7 (Day 66–75): Apply + Polish
+
+* Resume (1 page)
+* 2–3 strong projects
+* GitHub clean
+* Start applying (don’t wait)
+
+---
+
+# ⚠️ Hard Truths (Most People Fail Here)
+
+* Watching tutorials ≠ learning
+* Skipping projects = rejection
+* Not deploying = no job
+
+---
+
+# 🎯 Minimum “Job-Ready” Checklist
+
+You are ready if you can:
+
+✔ Build API without tutorial
+✔ Use npm packages confidently
+✔ Handle auth (JWT)
+✔ Connect database
+✔ Deploy backend live
+
+---
+
+# 💡 If you want next step
+
+I can:
+
+* Audit your current skill level
+* Give you **daily schedule (hour-by-hour)**
+* Or build **project ideas tailored to your resume**
+
+Just tell me:
+👉 “Beginner / know basics / already built something” -->
+
+
+</body>
+</html>

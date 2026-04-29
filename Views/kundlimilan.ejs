@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kundli Milan (Simplified)</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body { font-family: 'Poppins', sans-serif; }
+  .glow { box-shadow: 0 0 25px rgba(168,85,247,0.45); }
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<!-- HEADER -->
+<div class="text-center py-10">
+  <h1 class="text-5xl font-bold">💑 Kundli Milan</h1>
+  <p class="text-gray-300 mt-2">Ashta-Koota (36 Gun) — Simplified Model</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</div>
+
+<!-- FORM -->
+<form action="/kundlimilan" method="POST">
+  <input type="hidden" name="_method" value="POST">
+  <div class="flex justify-center px-4">
+    <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl w-full max-w-3xl glow">
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Boy -->
+        <div>
+          <h2 class="text-xl mb-3">👦 Boy Details</h2>
+          <input id="boyName" name="boyName" placeholder="Name" class="w-full mb-2 p-2 rounded bg-black/40 border border-purple-400">
+          <input id="boyDob" name="boyDob" type="date" class="w-full mb-2 p-2 rounded bg-black/40 border border-purple-400">
+        </div>
+
+        <!-- Girl -->
+        <div>
+          <h2 class="text-xl mb-3">👧 Girl Details</h2>
+          <input id="girlName" name="girlName" placeholder="Name" class="w-full mb-2 p-2 rounded bg-black/40 border border-purple-400">
+          <input id="girlDob" name="girlDob" type="date" class="w-full mb-2 p-2 rounded bg-black/40 border border-purple-400">
+        </div>
+      </div>
+
+      <button type="button" onclick="matchKundli()" 
+        class="w-full mt-6 bg-purple-600 py-3 rounded-xl hover:bg-purple-800">
+        Check Compatibility ✨
+      </button>
+
+      <div id="result" class="mt-8"></div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+// -----------------------------
+// 27 Nakshatras + attributes
+// -----------------------------
+const NAK = [
+ "Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha",
+ "Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha",
+ "Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha",
+ "Purva Bhadrapada","Uttara Bhadrapada","Revati"
+];
+
+// Attributes for Kootas (simplified canonical groupings)
+const ATTR = {
+  // Varna (4 groups)
+  varna: {
+    Brahmin: ["Ashwini","Mrigashira","Punarvasu","Pushya","Hasta","Jyeshtha","Revati"],
+    Kshatriya: ["Bharani","Rohini","Magha","Purva Phalguni","Uttara Phalguni","Chitra","Anuradha"],
+    Vaishya: ["Krittika","Ardra","Swati","Vishakha","Shravana","Dhanishta","Shatabhisha"],
+    Shudra: ["Ashlesha","Mula","Purva Ashadha","Uttara Ashadha","Purva Bhadrapada","Uttara Bhadrapada"]
+  },
+
+  // Vashya (5 groups)
+  vashya: {
+    Chatushpada: ["Ashwini","Bharani","Krittika","Rohini","Mrigashira"],
+    Manava: ["Ardra","Punarvasu","Pushya","Hasta","Chitra","Swati","Anuradha","Jyeshtha"],
+    Jalchar: ["Ashlesha","Purva Bhadrapada","Uttara Bhadrapada","Revati"],
+    Vanchar: ["Magha","Purva Phalguni","Uttara Phalguni","Vishakha"],
+    Keeta: ["Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha"]
+  },
+
+  // Gana (3)
+  gana: {
+    Deva: ["Ashwini","Mrigashira","Punarvasu","Pushya","Hasta","Anuradha","Revati"],
+    Manushya: ["Bharani","Rohini","Ardra","Purva Phalguni","Uttara Phalguni","Chitra","Swati","Dhanishta"],
+    Rakshasa: ["Krittika","Ashlesha","Magha","Vishakha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada"]
+  },
+
+  // Nadi (3)
+  nadi: {
+    Aadi: ["Ashwini","Ardra","Punarvasu","Uttara Phalguni","Hasta","Jyeshtha","Mula","Shatabhisha","Purva Bhadrapada"],
+    Madhya: ["Bharani","Mrigashira","Pushya","Purva Phalguni","Chitra","Anuradha","Purva Ashadha","Dhanishta","Uttara Bhadrapada"],
+    Antya: ["Krittika","Rohini","Ashlesha","Magha","Swati","Vishakha","Uttara Ashadha","Shravana","Revati"]
+  },
+
+  // Yoni (symbolic pairing, simplified pairs)
+  yoni: {
+    Ashwini:"Horse", Bharani:"Elephant", Krittika:"Sheep", Rohini:"Serpent", Mrigashira:"Serpent",
+    Ardra:"Dog", Punarvasu:"Cat", Pushya:"Sheep", Ashlesha:"Cat", Magha:"Rat",
+    "Purva Phalguni":"Rat", "Uttara Phalguni":"Cow", Hasta:"Buffalo", Chitra:"Tiger",
+    Swati:"Buffalo", Vishakha:"Tiger", Anuradha:"Deer", Jyeshtha:"Deer",
+    Mula:"Dog", "Purva Ashadha":"Monkey", "Uttara Ashadha":"Mongoose",
+    Shravana:"Monkey", Dhanishta:"Lion", Shatabhisha:"Horse",
+    "Purva Bhadrapada":"Lion", "Uttara Bhadrapada":"Cow", Revati:"Elephant"
+  }
+};
+
+// -----------------------------
+// Helper: get attribute group
+// -----------------------------
+function findGroup(map, nak){
+  for (const k in map){
+    if (Array.isArray(map[k])){
+      if (map[k].includes(nak)) return k;
+    } else {
+      // yoni mapping is direct
+      if (map[nak]) return map[nak];
+    }
+  }
+  return null;
+}
+
+// -----------------------------
+// Approx Nakshatra from DOB
+// -----------------------------
+function getNakshatra(d){
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0))/86400000);
+  return NAK[dayOfYear % 27];
+}
+
+// -----------------------------
+// Koota Scoring (36 total)
+// -----------------------------
+function scoreKootas(boyNak, girlNak){
+
+  const details = {};
+
+  // 1) Varna (1)
+  const bVarna = findGroup(ATTR.varna, boyNak);
+  const gVarna = findGroup(ATTR.varna, girlNak);
+  details.varna = (bVarna === gVarna) ? 1 : 0;
+
+  // 2) Vashya (2)
+  const bVash = findGroup(ATTR.vashya, boyNak);
+  const gVash = findGroup(ATTR.vashya, girlNak);
+  details.vashya = (bVash === gVash) ? 2 : 1; // partial credit
+
+  // 3) Tara (3) — distance-based
+  const i = NAK.indexOf(boyNak);
+  const j = NAK.indexOf(girlNak);
+  const dist = (Math.abs(i - j) % 9);
+  details.tara = (dist === 0) ? 3 : (dist >= 1 && dist <= 3 ? 2 : 1);
+
+  // 4) Yoni (4)
+  const bYoni = findGroup(ATTR.yoni, boyNak);
+  const gYoni = findGroup(ATTR.yoni, girlNak);
+  details.yoni = (bYoni === gYoni) ? 4 : 2;
+
+  // 5) Graha Maitri (5) — approximated via vowel groups
+  const gm = (boyNak[0] === girlNak[0]) ? 5 : 3;
+  details.graha = gm;
+
+  // 6) Gana (6)
+  const bGana = findGroup(ATTR.gana, boyNak);
+  const gGana = findGroup(ATTR.gana, girlNak);
+  details.gana = (bGana === gGana) ? 6 : 3;
+
+  // 7) Bhakoot (7) — sign distance proxy
+  const bh = (Math.abs(i - j) % 12);
+  details.bhakoot = (bh === 6 || bh === 8) ? 0 : 7;
+
+  // 8) Nadi (8)
+  const bNadi = findGroup(ATTR.nadi, boyNak);
+  const gNadi = findGroup(ATTR.nadi, girlNak);
+  details.nadi = (bNadi === gNadi) ? 0 : 8;
+
+  const total = Object.values(details).reduce((a,b)=>a+b,0);
+  return { total: Math.min(total,36), details };
+}
+
+// -----------------------------
+// Result label
+// -----------------------------
+function label(score){
+  if(score >= 30) return "Excellent 💖";
+  if(score >= 24) return "Very Good 👍";
+  if(score >= 18) return "Average ⚖️";
+  return "Low ⚠️";
+}
+
+// -----------------------------
+// MAIN
+// -----------------------------
+function matchKundli(){
+
+  const boyName = document.getElementById("boyName").value || "Boy";
+  const girlName = document.getElementById("girlName").value || "Girl";
+  const boyDob = document.getElementById("boyDob").value;
+  const girlDob = document.getElementById("girlDob").value;
+
+  if(!boyDob || !girlDob){
+    alert("Enter both DOBs");
+    return;
+  }
+
+  const bDate = new Date(boyDob);
+  const gDate = new Date(girlDob);
+
+  const bNak = getNakshatra(bDate);
+  const gNak = getNakshatra(gDate);
+
+  const { total, details } = scoreKootas(bNak, gNak);
+
+  document.getElementById("result").innerHTML = `
+    <div class="bg-purple-800/30 p-6 rounded-xl">
+
+      <h2 class="text-2xl mb-3">Compatibility Result</h2>
+
+      👦 ${boyName} — ${bNak}<br>
+      👧 ${girlName} — ${gNak}<br><br>
+
+      🔢 <b>Total Gun Score:</b> ${total} / 36<br><br>
+
+      💑 <b>Match Level:</b> ${label(total)}<br><br>
+
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <div>Varna: ${details.varna}/1</div>
+        <div>Vashya: ${details.vashya}/2</div>
+        <div>Tara: ${details.tara}/3</div>
+        <div>Yoni: ${details.yoni}/4</div>
+        <div>Graha Maitri: ${details.graha}/5</div>
+        <div>Gana: ${details.gana}/6</div>
+        <div>Bhakoot: ${details.bhakoot}/7</div>
+        <div>Nadi: ${details.nadi}/8</div>
+      </div>
+
+      <p class="text-sm text-gray-400 mt-4">
+      Simplified Nakshatra-based model. Real Ashta-Koota uses precise Moon position & full kundli.
+      </p>
+
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Prediction</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+.glow { box-shadow: 0 0 20px rgba(168,85,247,0.5); }
+</style>
+</head>
+
+<body class="bg-gradient-to-b from-black via-purple-900 to-black text-white min-h-screen">
+
+<!-- HEADER -->
+<div class="text-center py-12">
+  <h1 class="text-5xl font-bold">🔮 Future Insight Engine</h1>
+  <p class="text-gray-300 mt-2">Auspicious & Cautionary Life Signals</p>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full mt-4">Back to Dashboard</button>
+</div>
+
+<!-- FORM -->
+<form action="/auspicious" method="POST">
+  <input type="hidden" name="_method" value="POST">
+  <div class="flex justify-center px-4">
+    <div class="bg-white/10 backdrop-blur-xl border border-purple-500 p-8 rounded-2xl w-full max-w-xl glow">
+
+<input id="name" name="name" placeholder="Your Name"
+      class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+    <input id="dob" name="dob" type="date"
+        class="w-full mb-4 p-3 rounded bg-black/40 border border-purple-400">
+
+      <button type="button" onclick="predict()" 
+        class="w-full bg-purple-600 py-3 rounded-xl hover:bg-purple-800">
+        Predict My Future ✨
+      </button>
+
+      <div id="result" class="mt-8"></div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+
+// Zodiac calculation
+function getZodiac(day, month){
+  const signs = [
+    ["Capricorn",20],["Aquarius",19],["Pisces",21],["Aries",20],
+    ["Taurus",21],["Gemini",21],["Cancer",23],["Leo",23],
+    ["Virgo",23],["Libra",23],["Scorpio",22],["Sagittarius",22]
+  ];
+  return (day < signs[month-1][1]) ? signs[month-1][0] : signs[month%12][0];
+}
+
+// Data engine
+const predictions = {
+  Aries:{
+    good:"New opportunities and leadership growth.",
+    bad:"Avoid impulsive decisions.",
+    career:"Strong career push ahead.",
+    love:"Passion increases but avoid arguments."
+  },
+  Taurus:{
+    good:"Financial stability improves.",
+    bad:"Resistance to change may block growth.",
+    career:"Steady progress.",
+    love:"Stable and calm relationships."
+  },
+  Gemini:{
+    good:"Communication opens doors.",
+    bad:"Overthinking may create stress.",
+    career:"Networking brings success.",
+    love:"Fluctuations possible."
+  },
+  Cancer:{
+    good:"Emotional strength increases.",
+    bad:"Mood swings may affect decisions.",
+    career:"Support from others.",
+    love:"Deep bonding."
+  },
+  Leo:{
+    good:"Recognition and fame possible.",
+    bad:"Ego conflicts.",
+    career:"Leadership role.",
+    love:"Romantic energy high."
+  },
+  Virgo:{
+    good:"Precision leads to success.",
+    bad:"Over-perfection.",
+    career:"Detail work pays off.",
+    love:"Needs emotional openness."
+  },
+  Libra:{
+    good:"Balance and harmony.",
+    bad:"Indecision delays progress.",
+    career:"Partnership success.",
+    love:"Strong connections."
+  },
+  Scorpio:{
+    good:"Transformation and power.",
+    bad:"Emotional intensity.",
+    career:"Major breakthroughs.",
+    love:"Deep but complex."
+  },
+  Sagittarius:{
+    good:"Growth and travel luck.",
+    bad:"Carelessness risk.",
+    career:"Expansion phase.",
+    love:"Exciting but unstable."
+  },
+  Capricorn:{
+    good:"Hard work brings rewards.",
+    bad:"Stress overload.",
+    career:"Promotion chances.",
+    love:"Slow but strong."
+  },
+  Aquarius:{
+    good:"Innovation brings success.",
+    bad:"Detachment issues.",
+    career:"Creative success.",
+    love:"Unpredictable."
+  },
+  Pisces:{
+    good:"Intuition guides you.",
+    bad:"Escapism risk.",
+    career:"Creative field growth.",
+    love:"Emotional depth."
+  }
+};
+
+// MAIN FUNCTION
+function predict(){
+
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+
+  if(!name || !dob){
+    alert("Please fill details");
+    return;
+  }
+
+  const d = new Date(dob);
+  const zodiac = getZodiac(d.getDate(), d.getMonth()+1);
+  const data = predictions[zodiac];
+
+  document.getElementById("result").innerHTML = `
+    <div class="bg-purple-800/30 p-6 rounded-xl mt-4">
+
+      <h2 class="text-2xl mb-2">${name}, your future insights</h2>
+      <h1 class="text-3xl text-purple-400 mb-4">${zodiac}</h1>
+
+      🌟 <b>Auspicious:</b> ${data.good} <br><br>
+      ⚠️ <b>Caution:</b> ${data.bad} <br><br>
+
+      💼 <b>Career:</b> ${data.career} <br><br>
+      ❤️ <b>Love:</b> ${data.love} <br><br>
+
+      <p class="text-sm text-gray-400 mt-4">
+      These are general tendencies, not fixed destiny.
+      </p>
+
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>
