@@ -6,7 +6,8 @@ const contactRoutes = require('./Public/contactroutes');
 
 const app = express();
 app.use(methodOverride('_method'));
-const port = 3000;
+app.use(express.static("public"));
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -88,6 +89,6 @@ app.get('/explorenow', (req, res) => {
     res.render('explorenow.ejs');
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
