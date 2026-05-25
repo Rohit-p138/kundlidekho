@@ -4,15 +4,19 @@
   "description": "website based on astrology",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rohit Potraje",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "ejs": "^5.0.2",
     "express": "^5.2.1",
     "method-override": "^3.0.0",
+    "openai": "^6.39.0",
     "path": "^0.12.7",
+    "puppeteer": "^25.0.4",
     "random-words": "^2.0.1"
   }
 }

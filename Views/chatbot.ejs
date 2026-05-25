@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AstroSphere AI Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: radial-gradient(circle at top, #2b0266, #0b0220); color: white; }
+    .chat-bubble { max-width: 80%; white-space: pre-wrap; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="max-w-6xl mx-auto px-6 py-8">
+    <nav class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-purple-300">AstroSphere AI Chatbot</h1>
+        <p class="text-gray-300">Ask astrology, kundli, zodiac, and horoscope questions.</p>
+      </div>
+      <div class="space-x-4">
+        <a href="/dashboard" class="text-purple-300 hover:text-white">Dashboard</a>
+        <a href="/kundligeneretor" class="text-purple-300 hover:text-white">Kundli Generator</a>
+        <a href="/login" class="text-purple-300 hover:text-white">Login</a>
+      </div>
+    </nav>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 bg-white/10 border border-purple-500 rounded-3xl p-6 shadow-xl">
+        <h2 class="text-2xl font-semibold mb-4">Chat with Astro Assistant</h2>
+        <div id="chatBox" class="space-y-4 mb-6 overflow-auto max-h-[520px] p-4 bg-black/30 rounded-3xl border border-purple-500">
+          <div class="chat-bubble rounded-2xl bg-purple-600/20 p-4 text-gray-100">
+            <strong>Astro Assistant:</strong><br>
+            Hi! Ask me anything about astrology, kundli, zodiac signs, or horoscope advice.
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <input id="userMessage" type="text" placeholder="Type your question..." class="flex-1 p-4 rounded-2xl bg-black/50 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <button onclick="sendMessage()" class="bg-purple-600 hover:bg-purple-700 px-6 rounded-2xl">Send</button>
+        </div>
+      </div>
+
+      <div class="bg-white/10 border border-purple-500 rounded-3xl p-6 space-y-5">
+        <h3 class="text-xl font-semibold">💬 Ask About</h3>
+        <div class="space-y-3">
+          <div class="bg-purple-900/40 rounded-2xl p-3 cursor-pointer hover:bg-purple-900/60 transition" onclick="insertQuestion('What does my zodiac sign reveal about my personality?')">
+            <p class="text-purple-200 font-medium text-sm">Zodiac & Personality</p>
+            <p class="text-gray-400 text-xs">Traits, characteristics, compatibility</p>
+          </div>
+          <div class="bg-purple-900/40 rounded-2xl p-3 cursor-pointer hover:bg-purple-900/60 transition" onclick="insertQuestion('How can I improve my career and professional life?')">
+            <p class="text-purple-200 font-medium text-sm">Career & Success</p>
+            <p class="text-gray-400 text-xs">Job, business, promotion, growth</p>
+          </div>
+          <div class="bg-purple-900/40 rounded-2xl p-3 cursor-pointer hover:bg-purple-900/60 transition" onclick="insertQuestion('What does astrology say about my love life?')">
+            <p class="text-purple-200 font-medium text-sm">Love & Relationships</p>
+            <p class="text-gray-400 text-xs">Romance, marriage, compatibility</p>
+          </div>
+          <div class="bg-purple-900/40 rounded-2xl p-3 cursor-pointer hover:bg-purple-900/60 transition" onclick="insertQuestion('How can I improve my financial prosperity?')">
+            <p class="text-purple-200 font-medium text-sm">Wealth & Finance</p>
+            <p class="text-gray-400 text-xs">Money, abundance, investments</p>
+          </div>
+          <div class="bg-purple-900/40 rounded-2xl p-3 cursor-pointer hover:bg-purple-900/60 transition" onclick="insertQuestion('Tell me about the planets and their influence.')">
+            <p class="text-purple-200 font-medium text-sm">Planets & Houses</p>
+            <p class="text-gray-400 text-xs">Planetary positions, birth chart</p>
+          </div>
+          <div class="bg-purple-900/40 rounded-2xl p-3 cursor-pointer hover:bg-purple-900/60 transition" onclick="insertQuestion('What is Kundli Milan and compatibility?')">
+            <p class="text-purple-200 font-medium text-sm">Kundli & Matching</p>
+            <p class="text-gray-400 text-xs">Birth chart, compatibility analysis</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function insertQuestion(question) {
+      document.getElementById('userMessage').value = question;
+      document.getElementById('userMessage').focus();
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('userMessage');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chatBox');
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble rounded-2xl bg-white/10 p-4 text-right text-gray-200 self-end';
+      userBubble.innerHTML = '<strong>You:</strong><br>' + text;
+      chatBox.appendChild(userBubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = '';
+
+      const loadingBubble = document.createElement('div');
+      loadingBubble.className = 'chat-bubble rounded-2xl bg-purple-600/20 p-4 text-gray-100';
+      loadingBubble.id = 'loadingBubble';
+      loadingBubble.textContent = 'Astro Assistant is typing...';
+      chatBox.appendChild(loadingBubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await response.json();
+        loadingBubble.remove();
+
+        const botBubble = document.createElement('div');
+        botBubble.className = 'chat-bubble rounded-2xl bg-purple-600/20 p-4 text-gray-100';
+        botBubble.innerHTML = '<strong>Astro Assistant:</strong><br>' + (data.reply || 'Sorry, I could not answer that.');
+        chatBox.appendChild(botBubble);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (err) {
+        loadingBubble.remove();
+        const errorBubble = document.createElement('div');
+        errorBubble.className = 'chat-bubble rounded-2xl bg-red-500/20 p-4 text-gray-100';
+        errorBubble.innerHTML = '<strong>Error:</strong><br>Unable to connect to the chatbot. Please try again.';
+        chatBox.appendChild(errorBubble);
+      }
+    }
+
+    // Allow Enter key to send message
+    document.getElementById('userMessage').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+    }
+
+    document.getElementById('userMessage').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>

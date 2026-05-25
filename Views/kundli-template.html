@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kundli Renderer</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #09021c; color: #f0f4ff; }
+    .page { width: 210mm; min-height: 297mm; padding: 16mm; margin: 0 auto; background: #09021c; color: #f0f4ff; }
+    .card { background: rgba(42, 20, 95, 0.95); border: 1px solid #7c3aed; border-radius: 20px; padding: 24px; width: 100%; box-sizing: border-box; }
+    .title { color: #f8b4ff; font-size: 28px; margin-bottom: 12px; }
+    .row { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    .box { background: rgba(255,255,255,0.06); border-radius: 16px; padding: 16px; flex: 1; }
+    .label { color: #c4b5fd; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
+    .value { margin-top: 8px; font-size: 18px; color: #fff; }
+    .message { margin-top: 20px; color: #d8f8f2; font-size: 16px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card" id="kundliResult"></div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name') || 'Guest';
+    const dob = params.get('dob') || '';
+    const time = params.get('time') || 'Unknown';
+    const place = params.get('place') || 'Unknown';
+
+    const date = dob ? new Date(dob) : null;
+    const month = date ? date.getMonth() + 1 : 0;
+    const day = date ? date.getDate() : '-';
+    const year = date ? date.getFullYear() : '-';
+    const zodiacSigns = ["Capricorn","Aquarius","Pisces","Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius"];
+    const zodiac = zodiacSigns[(month - 1 + 12) % 12];
+    const element = ['Earth','Air','Water','Fire'][Math.floor(((month - 1 + 12) % 12) / 3)];
+    const luck = ['High energy', 'Balanced day', 'Favorable change', 'Focus on emotions'][Math.floor(Math.random()*4)];
+
+    const html = `
+      <div class="title">Kundli Preview for ${name}</div>
+      <div class="row">
+        <div class="box">
+          <div class="label">Date of Birth</div>
+          <div class="value">${dob || 'Not provided'}</div>
+        </div>
+        <div class="box">
+          <div class="label">Birth Time</div>
+          <div class="value">${time}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="box">
+          <div class="label">Birth Place</div>
+          <div class="value">${place}</div>
+        </div>
+        <div class="box">
+          <div class="label">Zodiac Sign</div>
+          <div class="value">${zodiac}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="box">
+          <div class="label">Element</div>
+          <div class="value">${element}</div>
+        </div>
+      </div>
+      <div class="message">
+        Based on the birth details you entered, this kundli preview indicates your zodiac sign is <strong>${zodiac}</strong> and your energy type is <strong>${element}</strong>. Today is a good day for <strong>${luck}</strong>. This kundli is generated locally on your machine without any external astrology API.
+      </div>
+    `;
+
+    document.getElementById('kundliResult').innerHTML = html;
+  </script>
+</body>
+</html>

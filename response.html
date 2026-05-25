@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AstroSphere</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+    canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+  </style>
+</head>
+
+<body class="bg-black text-white">
+
+<canvas id="stars"></canvas>
+
+<nav class="flex justify-between items-center px-8 py-5">
+  <h1 class="text-2xl font-bold text-purple-400">AstroSphere</h1>
+  <button onclick="window.location.href='/dashboard'" class="bg-purple-600 px-4 py-2 rounded-full">Back to Dashboard</button>
+  <div class="space-x-6 hidden md:block">
+    <a href="#" class="hover:text-purple-400">Home</a>
+    <a href="#" class="hover:text-purple-400">Horoscope</a>
+    <a href="#" class="hover:text-purple-400">Zodiac</a>
+    <a href="#" class="hover:text-purple-400">Contact</a>
+  </div>
+</nav>
+
+
+<!-- 🔮 Kundli Generator -->
+<section class="py-16 px-6 flex justify-center">
+  <div class="bg-white/10 backdrop-blur-lg border border-purple-500 rounded-2xl p-8 w-full max-w-xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Kundli Generator</h2>
+    
+    
+    <form action="/kundli" method="POST">
+    <input type="hidden" name="_method" value="POST">
+    <div class="space-y-4">
+      <input id="name" name="name" type="text" placeholder="Your Name" value="Test" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="dob" name="dob" type="date" placeholder="Your DOB" value="1990-01-01" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="time" name="time" type="time" placeholder="Your Birth time As 24hr" value="00:00" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="place" name="place" type="text" placeholder="Birth Place" value="Test" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+
+      <button type="submit" class="w-full bg-purple-600 hover:bg-purple-800 py-3 rounded">Generate Kundli</button>
+    </div>
+  </form>
+
+    <!-- Result -->
+    <div id="result" class="mt-6 text-center text-gray-300 ">
+      <div class="bg-black/60 border border-purple-500 rounded-3xl p-6 text-left">
+        
+      <div class="title">Kundli Preview for Test</div>
+      <div class="row">
+        <div class="box">
+          <div class="label">Date of Birth</div>
+          <div class="value">1990-01-01</div>
+        </div>
+        <div class="box">
+          <div class="label">Birth Time</div>
+          <div class="value">00:00</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="box">
+          <div class="label">Birth Place</div>
+          <div class="value">Test</div>
+        </div>
+        <div class="box">
+          <div class="label">Zodiac Sign</div>
+          <div class="value">Capricorn</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="box">
+          <div class="label">Element</div>
+          <div class="value">Earth</div>
+        </div>
+      </div>
+      <div class="message">
+        Based on the birth details you entered, this kundli preview indicates your zodiac sign is <strong>Capricorn</strong> and your energy type is <strong>Earth</strong>. Today is a good day for <strong>Focus on emotions</strong>. This kundli is generated locally on your machine without any external astrology API.
+      </div>
+    
+      </div>
+      
+      <div class="mt-6 flex justify-center">
+        <a href="/kundli/download?name=Test&dob=1990-01-01&time=00%3A00&place=Test" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-full text-white">Download Kundli as PDF</a>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<section class="px-6">
+  <div class="bg-white/10 backdrop-blur-lg border border-purple-500 rounded-2xl p-6 max-w-4xl mx-auto">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <div class="flex-1">
+        <h3 class="text-2xl font-semibold mb-4">AI Astro Chat</h3>
+        <p class="text-gray-300 mb-4">Ask the AI chatbot about your kundli, zodiac, birth chart or astrology advice.</p>
+        <div id="chatBox" class="bg-black/40 border border-purple-500 rounded-3xl p-4 min-h-[240px] max-h-[340px] overflow-auto space-y-4 text-gray-200">
+          <div class="rounded-2xl bg-purple-600/20 p-4">
+            <strong>Astro Assistant:</strong><br>
+            Welcome! Ask me anything about your kundli, zodiac sign or horoscope.
+          </div>
+        </div>
+        <div class="mt-4 flex gap-3">
+          <input id="chatInput" type="text" placeholder="Ask your astro question..." class="flex-1 p-4 rounded-2xl bg-black/50 border border-purple-400 focus:outline-none" />
+          <button onclick="sendKundliChat()" class="bg-purple-600 hover:bg-purple-700 px-6 rounded-2xl">Send</button>
+        </div>
+      </div>
+      <div class="lg:w-80 bg-purple-900/20 border border-purple-500 rounded-3xl p-5">
+        <h4 class="text-xl font-semibold mb-3">Chat Tips</h4>
+        <ul class="list-disc list-inside text-gray-300 space-y-2">
+          <li>“What does my zodiac sign mean?”</li>
+          <li>“How can I improve my career?”</li>
+          <li>“Tell me about my birth chart.”</li>
+          <li>“What are good dates for marriage?”</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="grid md:grid-cols-3 gap-8 px-8 py-16">
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition">
+    <h3 class="text-xl font-semibold mb-3">🌞 Daily Horoscope</h3>
+    <p class="text-gray-300">Accurate predictions for your zodiac sign.</p>
+  </div>
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition">
+    <h3 class="text-xl font-semibold mb-3">🌙 Moon Phases</h3>
+    <p class="text-gray-300">Track lunar influence on life.</p>
+  </div>
+  <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl border border-purple-500 hover:scale-105 transition">
+    <h3 class="text-xl font-semibold mb-3">✨ Compatibility</h3>
+    <p class="text-gray-300">Find your perfect match.</p>
+  </div>
+</section>
+
+<footer class="text-center py-6 border-t border-purple-700">
+  <p class="text-gray-400">© 2026 AstroSphere. All rights reserved.</p>
+</footer>
+
+<script>
+// ⭐ Stars animation
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let stars = [];
+for (let i = 0; i < 200; i++) {
+  stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.5, s: Math.random()*0.5 });
+}
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='white';
+  stars.forEach(star=>{
+    ctx.beginPath(); ctx.arc(star.x, star.y, star.r, 0, Math.PI*2); ctx.fill();
+    star.y += star.s;
+    if(star.y>canvas.height){ star.y=0; star.x=Math.random()*canvas.width; }
+  });
+  requestAnimationFrame(draw);
+}
+window.addEventListener('mousemove', e=>{
+  stars.forEach(star=>{ star.x += e.movementX*0.02; star.y += e.movementY*0.02; });
+});
+window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+draw();
+
+async function sendKundliChat(){
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if(!message) return;
+
+  const chatBox = document.getElementById('chatBox');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'rounded-2xl bg-white/10 p-4 text-right text-gray-200';
+  userBubble.innerHTML = '<strong>You:</strong><br>' + message;
+  chatBox.appendChild(userBubble);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  input.value = '';
+
+  const loading = document.createElement('div');
+  loading.className = 'rounded-2xl bg-purple-600/20 p-4 text-gray-100';
+  loading.id = 'chatLoading';
+  loading.textContent = 'Astro Assistant is typing...';
+  chatBox.appendChild(loading);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+    const data = await response.json();
+    loading.remove();
+
+    const replyBubble = document.createElement('div');
+    replyBubble.className = 'rounded-2xl bg-purple-600/20 p-4 text-gray-100';
+    replyBubble.innerHTML = '<strong>Astro Assistant:</strong><br>' + (data.reply || 'Sorry, I could not answer that.');
+    chatBox.appendChild(replyBubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (error) {
+    loading.remove();
+    const errorBubble = document.createElement('div');
+    errorBubble.className = 'rounded-2xl bg-red-500/20 p-4 text-gray-100';
+    errorBubble.innerHTML = '<strong>Error:</strong><br>Unable to send your message. Please try again.';
+    chatBox.appendChild(errorBubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
+
+</script>
+
+</body>
+</html>

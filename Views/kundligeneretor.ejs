@@ -33,20 +33,89 @@
   <div class="bg-white/10 backdrop-blur-lg border border-purple-500 rounded-2xl p-8 w-full max-w-xl">
     <h2 class="text-2xl font-bold mb-6 text-center">Kundli Generator</h2>
     
+    <% var kundliHtmlRender = typeof kundliHtml !== 'undefined' ? kundliHtml : null; var form = typeof formData !== 'undefined' ? formData : {}; %>
     <form action="/kundli" method="POST">
     <input type="hidden" name="_method" value="POST">
     <div class="space-y-4">
-      <input id="name" name="name" type="text" placeholder="Your Name" class="w-full p-3 rounded bg-black/40 border border-purple-400">
-      <input id="dob" name="dob" type="date" placeholder="Your DOB" class="w-full p-3 rounded bg-black/40 border border-purple-400">
-      <input id="time" name="time" type="time" placeholder="Your Birth time As 24hr" class="w-full p-3 rounded bg-black/40 border border-purple-400">
-      <input id="place" name="place" type="text" placeholder="Birth Place" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="name" name="name" type="text" placeholder="Your Name" value="<%= form.name || '' %>" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="dob" name="dob" type="date" placeholder="Your DOB" value="<%= form.dob || '' %>" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="time" name="time" type="time" placeholder="Your Birth time As 24hr" value="<%= form.time || '' %>" class="w-full p-3 rounded bg-black/40 border border-purple-400">
+      <input id="place" name="place" type="text" placeholder="Birth Place" value="<%= form.place || '' %>" class="w-full p-3 rounded bg-black/40 border border-purple-400">
 
-      <button type="button" onclick="generateKundli()" class="w-full bg-purple-600 hover:bg-purple-800 py-3 rounded">Generate Kundli</button>
+      <button type="submit" class="w-full bg-purple-600 hover:bg-purple-800 py-3 rounded">Generate Kundli</button>
     </div>
   </form>
 
     <!-- Result -->
-    <div id="result" class="mt-6 text-center text-gray-300 hidden"></div>
+    <div id="result" class="mt-6 text-center text-gray-300 <%= kundliHtmlRender ? '' : 'hidden' %>">
+      <div class="bg-black/60 border border-purple-500 rounded-3xl p-6 text-left">
+        <%- kundliHtmlRender || '' %>
+      </div>
+      <% if (kundliHtmlRender) { %>
+      <div class="mt-6 flex justify-center">
+        <a href="/kundli/download?name=<%= encodeURIComponent(form.name || '') %>&dob=<%= encodeURIComponent(form.dob || '') %>&time=<%= encodeURIComponent(form.time || '') %>&place=<%= encodeURIComponent(form.place || '') %>" class="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-full text-white">Download Kundli as PDF</a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="px-6">
+  <div class="bg-white/10 backdrop-blur-lg border border-purple-500 rounded-2xl p-6 max-w-4xl mx-auto">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <div class="flex-1">
+        <h3 class="text-2xl font-semibold mb-4">AI Astro Chat</h3>
+        <p class="text-gray-300 mb-4">Ask the AI chatbot about your kundli, zodiac, birth chart or astrology advice.</p>
+        <div id="chatBox" class="bg-black/40 border border-purple-500 rounded-3xl p-4 min-h-[240px] max-h-[340px] overflow-auto space-y-4 text-gray-200">
+          <div class="rounded-2xl bg-purple-600/20 p-4">
+            <strong>Astro Assistant:</strong><br>
+            Welcome! Ask me anything about your kundli, zodiac sign or horoscope.
+          </div>
+        </div>
+        <div class="mt-4 flex gap-3">
+          <input id="chatInput" type="text" placeholder="Ask your astro question..." class="flex-1 p-4 rounded-2xl bg-black/50 border border-purple-400 focus:outline-none" />
+          <button onclick="sendKundliChat()" class="bg-purple-600 hover:bg-purple-700 px-6 rounded-2xl">Send</button>
+        </div>
+      </div>
+      <div class="lg:w-80 bg-purple-900/20 border border-purple-500 rounded-3xl p-5">
+        <h4 class="text-xl font-semibold mb-3">💬 Chat Tips</h4>
+        <p class="text-gray-400 text-sm mb-4">Ask about any of these topics:</p>
+        <ul class="space-y-2">
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">💫</span>
+            <span>"What does my zodiac sign mean?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">💖</span>
+            <span>"How can I improve my love life?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">💼</span>
+            <span>"What about my career prospects?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">💰</span>
+            <span>"How can I attract wealth?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">🌙</span>
+            <span>"What is my moon sign?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">👥</span>
+            <span>"Are we compatible?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">🎯</span>
+            <span>"What are my strengths?"</span>
+          </li>
+          <li class="text-purple-200 text-sm flex items-start">
+            <span class="mr-2">🔮</span>
+            <span>"Tell me about planetary houses"</span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -95,18 +164,50 @@ window.addEventListener('mousemove', e=>{
 window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
 draw();
 
-// 🔮 Simple Kundli logic (demo only)
-function generateKundli(){
-  const name = document.getElementById('name').value;
-  const dob = new Date(document.getElementById('dob').value);
-  const month = dob.getMonth()+1;
+async function sendKundliChat(){
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if(!message) return;
 
-  const zodiac = ["Capricorn","Aquarius","Pisces","Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius"][month-1];
+  const chatBox = document.getElementById('chatBox');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'rounded-2xl bg-white/10 p-4 text-right text-gray-200';
+  userBubble.innerHTML = '<strong>You:</strong><br>' + message;
+  chatBox.appendChild(userBubble);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  input.value = '';
 
-  const result = document.getElementById('result');
-  result.classList.remove('hidden');
-  result.innerHTML = `✨ <b>${name}</b>, your zodiac sign is <b>${zodiac}</b>.<br>\n  This is a basic Kundli preview. Full chart requires astrology API.`;
+  const loading = document.createElement('div');
+  loading.className = 'rounded-2xl bg-purple-600/20 p-4 text-gray-100';
+  loading.id = 'chatLoading';
+  loading.textContent = 'Astro Assistant is typing...';
+  chatBox.appendChild(loading);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+    const data = await response.json();
+    loading.remove();
+
+    const replyBubble = document.createElement('div');
+    replyBubble.className = 'rounded-2xl bg-purple-600/20 p-4 text-gray-100';
+    replyBubble.innerHTML = '<strong>Astro Assistant:</strong><br>' + (data.reply || 'Sorry, I could not answer that.');
+    chatBox.appendChild(replyBubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (error) {
+    loading.remove();
+    const errorBubble = document.createElement('div');
+    errorBubble.className = 'rounded-2xl bg-red-500/20 p-4 text-gray-100';
+    errorBubble.innerHTML = '<strong>Error:</strong><br>Unable to send your message. Please try again.';
+    chatBox.appendChild(errorBubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 }
+
 </script>
 
 </body>
